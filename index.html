@@ -605,6 +605,7 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
         .product-detail-main {
             display: flex;
             flex-direction: column;
+            overflow-y: auto; /* Enable scrolling for tall content */
         }
 
 
@@ -1013,18 +1014,14 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
             .products-page { margin: 2rem auto; max-width: 1200px; }
             .product-detail-page { margin: 2rem auto; max-width: 1100px; padding: 2rem 1.25rem;}
             .product-detail-layout {
-                display: flex;
-                align-items: stretch; /* Make columns equal height */
+                grid-template-columns: 1fr 1.2fr; /* Two columns for desktop */
                 gap: 3rem;
             }
 
             .product-detail-gallery {
-                flex: 1; /* Assign flex ratio */
                 position: sticky;
                 top: 100px;
-            }
-            .product-detail-main {
-                flex: 1.2; /* Assign flex ratio */
+                align-self: start;
             }
             .product-info-tabs {
                 max-width: 900px;
@@ -3164,6 +3161,7 @@ Microsoft-এর অফিসিয়াল Activation Key, ইমেইলে ড
         }
 
         function setupEventListeners() {
+            window.addEventListener('resize', adjustProductDetailHeight);
             if (domElements.cartIcon) { domElements.cartIcon.addEventListener('click', () => { navigateTo('cart'); }); }
             if (domElements.cartClose) { domElements.cartClose.addEventListener('click', () => { domElements.cartModal.style.display = 'none'; }); }
             if (domElements.checkoutBtnCart) { domElements.checkoutBtnCart.addEventListener('click', () => { if (cart.length === 0) { showToast('Your cart is empty! Cannot proceed to checkout.', 'error'); return; } domElements.cartModal.style.display = 'none'; navigateTo('checkout', null, null, true); }); }
@@ -3635,6 +3633,24 @@ function renderReviews(product) {
     }
 
     setupRelatedProductImages();
+
+    adjustProductDetailHeight();
+}
+
+function adjustProductDetailHeight() {
+    const gallery = document.querySelector('#productDetailPage .product-detail-gallery');
+    const mainInfo = document.querySelector('#productDetailPage .product-detail-main');
+
+    if (gallery && mainInfo && window.innerWidth >= 769) {
+        requestAnimationFrame(() => {
+            const galleryHeight = gallery.offsetHeight;
+            if (galleryHeight > 0) {
+                mainInfo.style.height = `${galleryHeight}px`;
+            }
+        });
+    } else if (mainInfo) {
+        mainInfo.style.height = ''; // Reset on mobile
+    }
 }
 
 function openTab(evt, tabName) {
