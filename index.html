@@ -1023,6 +1023,9 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
                 top: 100px;
                 align-self: start;
             }
+            .product-detail-main.no-duration {
+                height: auto !important;
+            }
             .product-detail-title {
                 font-size: 1.8rem; /* Reduced font size for desktop */
             }
@@ -1237,6 +1240,11 @@ src="https://www.facebook.com/tr?id=482675157669768&ev=PageView&noscript=1"
             .related-products-grid { grid-template-columns: repeat(3, 1fr); }
             .homepage-products-grid .product-card:nth-child(n+4):not(.skeleton-card) { display: none; }
             .homepage-products-grid .skeleton-card:nth-child(n+4) { display: none; }
+        }
+        @media (min-width: 993px) {
+            .product-detail-main-image-container {
+                aspect-ratio: 4 / 5;
+            }
         }
         @media (min-width: 769px) {
             .homepage-products-grid.ebooks-grid .product-card:nth-child(n+4):not(.skeleton-card) { display: none; }
@@ -3533,7 +3541,9 @@ function renderReviews(product) {
     // Duration selector and price
     let durationSelectorHTML = '';
     let currentPrice = parseFloat(product.price);
-    if (product.category === 'subscription' && Array.isArray(product.durations) && product.durations.length > 0) {
+    const hasDuration = product.category === 'subscription' && Array.isArray(product.durations) && product.durations.length > 0;
+
+    if (hasDuration) {
         currentPrice = parseFloat(product.durations[0].price);
         durationSelectorHTML = `
             <div class="duration-selector" style="margin-bottom:0.75rem;display:block;">
@@ -3574,7 +3584,7 @@ function renderReviews(product) {
             <div class="product-detail-gallery">
                 ${tempImageDiv.innerHTML}
             </div>
-            <div class="product-detail-main">
+            <div class="product-detail-main${!hasDuration ? ' no-duration' : ''}">
                 <h2 class="product-detail-title">${product.name || 'N/A'}</h2>
                 <p class="product-short-description">${product.description || ''}</p>
                 <div class="product-detail-price">৳${currentPrice.toFixed(2)}</div>
